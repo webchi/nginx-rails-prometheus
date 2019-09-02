@@ -15,3 +15,10 @@ scrape_configs:
   static_configs:
     - targets:
       - 'sidekiq:5100'
+
+- job_name: 'nginx'
+  scheme: http
+  metrics_path: '/metrics'
+  static_configs:
+    - targets:
+      - 'nginx:9527'      

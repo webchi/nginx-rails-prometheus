@@ -7,6 +7,16 @@ x-app-service-template: &app
     - ./rails_app:/app
 
 services:
+  nginx:
+    image: ichai/nginx-lua-prometheus:latest
+    ports:
+      - 8000:80  
+    depends_on:
+      - redis
+      - sidekiq     
+    volumes:
+      - ./nginx/rails.conf:/etc/nginx/conf.d/rails.conf     
+
   rails:
     <<: *app
     ports:
@@ -44,7 +54,6 @@ services:
       - 3000:3000/tcp
     volumes: 
       - ./grafana_db:/var/lib/grafana
-    user: "104"
 
   prometheus:
     image: prom/prometheus:v2.4.3
@@ -63,4 +72,4 @@ services:
     image: rails_stressor
     depends_on:
       - rails
-    command: -z 2m -c 15 -m GET http://rails:5000
+    command: -z 2m -c 15 -m GET http://nginx:80
